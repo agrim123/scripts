@@ -1,6 +1,6 @@
 #!/bin/ruby
 
-def gen_pass()
+def gen_pass(len = nil)
   alpha = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
   special = "!@#$%^&*()_+{}|:?><[];/.,-="
   numbers = "1234567890"
@@ -12,9 +12,9 @@ def gen_pass()
 
   rand_pass = "#{rand_alpha}#{rand_number}#{rand_special}#{rand_garbage}"
 
-  n = rand(16...30)
+  n = len > 0 ? len : rand(16...30)
 
   rand_pass.chars.shuffle.shuffle.sample(n).join()
 end
 
-puts gen_pass()
+puts gen_pass(ARGV[0].to_i)
