@@ -2,10 +2,15 @@
 
 set -e;
 
+# get date and time of backup
+DATE=`date +%a_%d_%m_%g_%H_%M_%S_%Z`
+
 # define base dir
 BASE_DIR="/home/user/";
 
-LOCAL_BACKUP_DIRECTORY="${BASE_DIR}backup/";
+LOCAL_BACKUP_DIR="${BASE_DIR}backup/";
+
+NEW_BACKUP_DIR="${LOCAL_BACKUP_DIR}${DATE}/"
 
 # store paths to be taken for backup
 # relative to base dir
@@ -59,7 +64,7 @@ check_if_host_is_up() {
 initiate_local_backup() {
   for i in "${dirs[@]}"
   do
-    rsync -aqz $i $LOCAL_BACKUP_DIRECTORY;
+    rsync -aqz $i $NEW_BACKUP_DIR;
   done
 
   success "Saved to local backup"
@@ -68,7 +73,7 @@ initiate_local_backup() {
 continue_remote_backup() {
   info "Saving backup to remote server"
 
-  status=$(rsync -azq $LOCAL_BACKUP_DIRECTORY "${USERNAME}@${SERVER_IP}:${REMOTE_BACKUP_PATH}")
+  status=$(rsync -azq $LOCAL_BACKUP_DIR "${USERNAME}@${SERVER_IP}:${REMOTE_BACKUP_PATH}")
 
   success "Saved backup to remote server"
   complete "Completed backup procedure"
@@ -86,10 +91,14 @@ initiate_remote_backup() {
 
 info "Starting backup procedure"
 
-if [ ! -d "$LOCAL_BACKUP_DIRECTORY" ]; then
+if [ ! -d "$LOCAL_BACKUP_DIR" ]; then
   success "Created a local backup directory";
-  mkdir -p $LOCAL_BACKUP_DIRECTORY;
+  mkdir -p $LOCAL_BACKUP_DIR;
 fi
+
+mkdir -p $NEW_BACKUP_DIR
+
+info "Created backup directory: ${NEW_BACKUP_DIR}"
 
 info "Saving to local backup directory";
 
