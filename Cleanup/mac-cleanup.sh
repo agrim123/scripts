@@ -118,6 +118,14 @@ cleanup() {
     echo 'Purge inactive memory...'
     sudo purge
 
+    echo "Cleaning up bash history..."
+    sudo rm /Users/"$(whoami)"/.zsh_history
+    sudo rm -rf /Users/"$(whoami)"/.cache
+    sudo rm -rf /Users/"$(whoami)"/zsh
+
+    echo "Cleaning up private folders..."
+    sudo rm -rf /Users/"$(whoami)"/Movies/* /Users/"$(whoami)"/Music/* /Users/"$(whoami)"/Pictures/*
+
     currentSpace=$(df / | tail -1 | awk '{print $4}')
     count=$((oldSpace - currentSpace))
     bytesToHuman $count
